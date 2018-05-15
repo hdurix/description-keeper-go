@@ -1,3 +1,76 @@
+# Usage
+
+Bot for storing message in Telegram discussion.
+
+Can receive 4 commands:
+
+- `/get`: Get channel description
+- `/set`: Set channel description
+- `/add`: Add line to channel description
+- `/remove`: Remove line from channel description
+
+All data is stored in [kvstore.io][].
+
+## Now
+
+### Install now
+
+For example:
+
+```sh
+yarn global add now
+```
+
+### Add secret variables
+
+```sh
+now secrets add keeper-kvstore-token "XXXXX"
+now secrets add keeper-bot-id "123:ABC"
+```
+
+### Deploy the app
+
+```sh
+now
+```
+
+### Use Alias
+
+You can first change the alias in [now.json](now.json).
+```json
+{
+  "alias": "custom-alias",
+}
+```
+
+Then, once the deployment is done:
+
+```sh
+now alias
+```
+
+## Telegram
+
+### Check connection
+
+```sh
+curl -i -X GET https://api.telegram.org/bot<apikey>/getMe
+```
+
+### Get Webhook Info
+
+```sh
+curl -i -X GET https://api.telegram.org/bot<apikey>/getWebhookInfo
+```
+
+### Post Webhook
+
+```sh
+DOMAIN=<domain>
+APIKEY=<apikey>
+curl -F "url=https://$DOMAIN/$APIKEY/send" https://api.telegram.org/bot$APIKEY/setWebhook
+```
+
 # Go
 
 ## References
@@ -56,41 +129,4 @@ func TestName(t *testing.T) {
 - https://labix.org/gocheck
 
 
-## Now
-
-### Install now
-
-For example:
-
-```sh
-yarn global add now
-```
-
-### Add secret variables
-
-```sh
-now secrets add keeper-kvstore-token "XXXXX"
-now secrets add keeper-bot-id "123:ABC"
-```
-
-## Telegram
-
-### Check connection
-
-```sh
-curl -i -X GET https://api.telegram.org/bot<apikey>/getMe
-```
-
-### Get Webhook Info
-
-```sh
-curl -i -X GET https://api.telegram.org/bot<apikey>/getWebhookInfo
-```
-
-### Post Webhook
-
-```sh
-DOMAIN=<domain>
-APIKEY=<apikey>
-curl -F "url=https://$DOMAIN/$APIKEY/send" https://api.telegram.org/bot$APIKEY/setWebhook
-```
+[kvstore.io]: http://www.kvstore.io/
