@@ -56,3 +56,41 @@ func TestName(t *testing.T) {
 - https://labix.org/gocheck
 
 
+## Now
+
+### Install now
+
+For example:
+
+```sh
+yarn global add now
+```
+
+### Add secret variables
+
+```sh
+now secrets add keeper-kvstore-token "XXXXX"
+now secrets add keeper-bot-id "123:ABC"
+```
+
+## Telegram
+
+### Check connection
+
+```sh
+curl -i -X GET https://api.telegram.org/bot<apikey>/getMe
+```
+
+### Get Webhook Info
+
+```sh
+curl -i -X GET https://api.telegram.org/bot<apikey>/getWebhookInfo
+```
+
+### Post Webhook
+
+```sh
+DOMAIN=<domain>
+APIKEY=<apikey>
+curl -F "url=https://$DOMAIN/$APIKEY/send" https://api.telegram.org/bot$APIKEY/setWebhook
+```

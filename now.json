@@ -1,0 +1,8 @@
+{
+  "alias": "telegram-description-keeper",
+  "env": {
+	"KVSTORE_TOKEN": "@keeper-kvstore-token",
+	"TELEGRAM_BOT_ID": "@keeper-bot-id",
+	"KVSTORE_COLLECTION_NAME": "messages"
+  }
+}

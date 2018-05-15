@@ -31,7 +31,7 @@ func main() {
 	checkEnvironmentVariable("KVSTORE_COLLECTION_NAME")
 	log.Println("server started")
 	http.HandleFunc("/", rootHandler)
-	http.HandleFunc(os.Getenv("TELEGRAM_BOT_ID")+"/send", sendHandler)
+	http.HandleFunc("/"+os.Getenv("TELEGRAM_BOT_ID")+"/send", sendHandler)
 	http.ListenAndServe(":8080", nil)
 }
 
