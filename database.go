@@ -12,8 +12,9 @@ import (
 )
 
 var (
-	KVSTORE_URL string = "https://kvstore.p.mashape.com"
-	collectionName = os.Getenv("KVSTORE_COLLECTION_NAME")
+	KVSTORE_URL    string = "https://kvstore.p.mashape.com"
+	collectionName string = os.Getenv("KVSTORE_COLLECTION_NAME")
+	kvStoreToken   string = os.Getenv("KVSTORE_TOKEN")
 )
 
 type KvstoreMessage struct {
@@ -31,7 +32,7 @@ func getMessage(chatId int64) string {
 		log.Fatal(err)
 	}
 
-	req.Header.Add("X-Mashape-Key", os.Getenv("KVSTORE_TOKEN"))
+	req.Header.Add("X-Mashape-Key", kvStoreToken)
 
 	res, getErr := client.Do(req)
 	if getErr != nil {
@@ -59,7 +60,7 @@ func putMessage(chatId int64, value string) {
 		log.Fatal(err)
 	}
 
-	req.Header.Add("X-Mashape-Key", os.Getenv("KVSTORE_TOKEN"))
+	req.Header.Add("X-Mashape-Key", kvStoreToken)
 
 	_, getErr := client.Do(req)
 	if getErr != nil {

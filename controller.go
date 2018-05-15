@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"net/http"
 	"net/url"
 	"os"
@@ -21,7 +21,7 @@ var (
 
 func processUpdate(update tgbotapi.Update) {
 	if !isUpdateContainingMessage(update) {
-		fmt.Printf("update does not contain any text message")
+		log.Printf("update does not contain any text message")
 		return
 	}
 
@@ -29,7 +29,7 @@ func processUpdate(update tgbotapi.Update) {
 }
 
 func processUpdateMessage(chatId int64, text string) {
-	fmt.Printf("[Chat Id: %d] Treat message %s\n", chatId, text)
+	log.Printf("[Chat Id: %d] Treat message %s\n", chatId, text)
 
 	if strings.HasPrefix(text, SET_COMMAND) {
 		setDescription(chatId, extractSetText(text))
