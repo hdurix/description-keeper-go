@@ -1,4 +1,4 @@
-package description_keeper
+package main
 
 import (
 	"testing"

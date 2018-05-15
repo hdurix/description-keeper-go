@@ -1,4 +1,4 @@
-package description_keeper
+package main
 
 import (
 	"bytes"
@@ -13,6 +13,7 @@ import (
 
 var (
 	KVSTORE_URL string = "https://kvstore.p.mashape.com"
+	collectionName = os.Getenv("KVSTORE_COLLECTION_NAME")
 )
 
 type KvstoreMessage struct {
@@ -25,7 +26,7 @@ func getMessage(chatId int64) string {
 		Timeout: time.Second * 10,
 	}
 
-	req, err := http.NewRequest(http.MethodGet, getItemUrl(chatId), nil)
+	req, err := http.NewRequest(http.MethodGet, getItemUrl(chatId, collectionName), nil)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -53,7 +54,7 @@ func putMessage(chatId int64, value string) {
 	}
 
 	jsonText := []byte(value)
-	req, err := http.NewRequest(http.MethodPut, getItemUrl(chatId), bytes.NewBuffer(jsonText))
+	req, err := http.NewRequest(http.MethodPut, getItemUrl(chatId, collectionName), bytes.NewBuffer(jsonText))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -66,8 +67,8 @@ func putMessage(chatId int64, value string) {
 	}
 }
 
-func getItemUrl(chatId int64) string {
-	return KVSTORE_URL + "/collections/" + os.Getenv("KVSTORE_COLLECTION_NAME") + "/items/" + strconv.FormatInt(chatId, 10)
+func getItemUrl(chatId int64, collectionName string) string {
+	return KVSTORE_URL + "/collections/" + collectionName + "/items/" + strconv.FormatInt(chatId, 10)
 }
 
 func extractValueFromJson(jsonText []byte) string {

@@ -1,4 +1,4 @@
-package description_keeper
+package main
 
 import (
 	"fmt"
@@ -32,11 +32,11 @@ func processUpdateMessage(chatId int64, text string) {
 	fmt.Printf("[Chat Id: %d] Treat message %s\n", chatId, text)
 
 	if strings.HasPrefix(text, SET_COMMAND) {
-		setDescription(chatId, text)
+		setDescription(chatId, extractSetText(text))
 	} else if strings.HasPrefix(text, ADD_COMMAND) {
-		addDescription(chatId, text)
+		addDescription(chatId, extractAddText(text))
 	} else if strings.HasPrefix(text, REMOVE_COMMAND) {
-		removeDescription(chatId, text)
+		removeDescription(chatId, extractRemoveText(text))
 	} else if strings.HasPrefix(text, GET_COMMAND) {
 		getDescription(chatId)
 	}
@@ -49,17 +49,17 @@ func getDescription(chatId int64) {
 }
 
 func setDescription(chatId int64, text string) {
-	newMessage := extractSetText(text)
+	newMessage := text
 	putMessage(chatId, newMessage)
 }
 
 func addDescription(chatId int64, text string) {
-	newMessage := addText(getMessage(chatId), extractAddText(text))
+	newMessage := addText(getMessage(chatId), text)
 	putMessage(chatId, newMessage)
 }
 
 func removeDescription(chatId int64, text string) {
-	newMessage := removeText(getMessage(chatId), extractRemoveText(text))
+	newMessage := removeText(getMessage(chatId), text)
 	putMessage(chatId, newMessage)
 }
 
