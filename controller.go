@@ -20,59 +20,59 @@ var (
 )
 
 func processUpdate(update tgbotapi.Update) {
-    if !isUpdateContainingMessage(update) {
-        fmt.Printf("update does not contain any text message")
-        return
-    }
+	if !isUpdateContainingMessage(update) {
+		fmt.Printf("update does not contain any text message")
+		return
+	}
 
-    processUpdateMessage(update.Message.Chat.ID, update.Message.Text)
+	processUpdateMessage(update.Message.Chat.ID, update.Message.Text)
 }
 
 func processUpdateMessage(chatId int64, text string) {
-    fmt.Printf("[Chat Id: %d] Treat message %s\n", chatId, text)
+	fmt.Printf("[Chat Id: %d] Treat message %s\n", chatId, text)
 
-    if (strings.HasPrefix(text, SET_COMMAND)) {
-        setDescription(chatId, text)
-    } else if (strings.HasPrefix(text, ADD_COMMAND)) {
-        addDescription(chatId, text)
-    } else if (strings.HasPrefix(text, REMOVE_COMMAND)) {
-        removeDescription(chatId, text)
-    } else if (strings.HasPrefix(text, GET_COMMAND)) {
-        getDescription(chatId);
-    }
+	if strings.HasPrefix(text, SET_COMMAND) {
+		setDescription(chatId, text)
+	} else if strings.HasPrefix(text, ADD_COMMAND) {
+		addDescription(chatId, text)
+	} else if strings.HasPrefix(text, REMOVE_COMMAND) {
+		removeDescription(chatId, text)
+	} else if strings.HasPrefix(text, GET_COMMAND) {
+		getDescription(chatId)
+	}
 }
 
 func getDescription(chatId int64) {
-     message := getMessage(chatId)
-     uri := computeSendMessageUri(message, chatId, os.Getenv("TELEGRAM_BOT_ID"))
-     http.Get(uri)
- }
+	message := getMessage(chatId)
+	uri := computeSendMessageUri(message, chatId, os.Getenv("TELEGRAM_BOT_ID"))
+	http.Get(uri)
+}
 
 func setDescription(chatId int64, text string) {
-     newMessage := extractSetText(text)
-     putMessage(chatId, newMessage)
- }
+	newMessage := extractSetText(text)
+	putMessage(chatId, newMessage)
+}
 
 func addDescription(chatId int64, text string) {
-     newMessage := addText(getMessage(chatId), extractAddText(text))
-     putMessage(chatId, newMessage)
- }
+	newMessage := addText(getMessage(chatId), extractAddText(text))
+	putMessage(chatId, newMessage)
+}
 
 func removeDescription(chatId int64, text string) {
-     newMessage := removeText(getMessage(chatId), extractRemoveText(text))
-     putMessage(chatId, newMessage)
- }
+	newMessage := removeText(getMessage(chatId), extractRemoveText(text))
+	putMessage(chatId, newMessage)
+}
 
 func isUpdateContainingMessage(update tgbotapi.Update) bool {
 	return update.Message != nil && update.Message.IsCommand() && update.Message.Text != ""
 }
 
 func extractSetText(text string) string {
-	return text[len(SET_COMMAND)+1 : len(text)]
+	return text[len(SET_COMMAND)+1:]
 }
 
 func extractAddText(text string) string {
-	return text[len(ADD_COMMAND)+1 : len(text)]
+	return text[len(ADD_COMMAND)+1:]
 }
 
 func addText(previousText string, textToAdd string) string {
@@ -83,7 +83,7 @@ func addText(previousText string, textToAdd string) string {
 }
 
 func extractRemoveText(text string) string {
-	return text[len(REMOVE_COMMAND)+1 : len(text)]
+	return text[len(REMOVE_COMMAND)+1:]
 }
 
 func removeText(previousText string, textToRemove string) string {
@@ -95,15 +95,15 @@ func removeText(previousText string, textToRemove string) string {
 }
 
 func computeSendMessageUri(message string, chatId int64, botId string) string {
-    u := &url.URL{
-        Scheme: "https",
-        Host: "api.telegram.org",
-        Path: "/bot" + botId + "/sendMessage",
-    }
-    q := u.Query()
-    q.Set("text", message)
-    q.Add("chat_id", strconv.FormatInt(chatId, 10))
-    q.Add("disable_web_page_preview", "true")
-    u.RawQuery = q.Encode()
-    return u.String()
+	u := &url.URL{
+		Scheme: "https",
+		Host:   "api.telegram.org",
+		Path:   "/bot" + botId + "/sendMessage",
+	}
+	q := u.Query()
+	q.Set("text", message)
+	q.Add("chat_id", strconv.FormatInt(chatId, 10))
+	q.Add("disable_web_page_preview", "true")
+	u.RawQuery = q.Encode()
+	return u.String()
 }

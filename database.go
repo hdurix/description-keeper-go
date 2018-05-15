@@ -1,7 +1,7 @@
 package description_keeper
 
 import (
-    "bytes"
+	"bytes"
 	"encoding/json"
 	"io/ioutil"
 	"log"
@@ -12,70 +12,70 @@ import (
 )
 
 var (
-    KVSTORE_URL string = "https://kvstore.p.mashape.com"
+	KVSTORE_URL string = "https://kvstore.p.mashape.com"
 )
 
 type KvstoreMessage struct {
-    Value string `json:"value"`
+	Value string `json:"value"`
 }
 
 func getMessage(chatId int64) string {
 
-    client := &http.Client{
-        Timeout: time.Second * 10,
-    }
+	client := &http.Client{
+		Timeout: time.Second * 10,
+	}
 
-    req, err := http.NewRequest(http.MethodGet, getItemUrl(chatId), nil)
-    if err != nil {
-        log.Fatal(err)
-    }
+	req, err := http.NewRequest(http.MethodGet, getItemUrl(chatId), nil)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-    req.Header.Add("X-Mashape-Key", os.Getenv("KVSTORE_TOKEN"))
+	req.Header.Add("X-Mashape-Key", os.Getenv("KVSTORE_TOKEN"))
 
-    res, getErr := client.Do(req)
-    if getErr != nil {
-        log.Fatal(getErr)
-    }
+	res, getErr := client.Do(req)
+	if getErr != nil {
+		log.Fatal(getErr)
+	}
 
-    body, readErr := ioutil.ReadAll(res.Body)
-    if readErr != nil {
-        log.Fatal(readErr)
-    }
+	body, readErr := ioutil.ReadAll(res.Body)
+	if readErr != nil {
+		log.Fatal(readErr)
+	}
 
-    return extractValueFromJson(body)
+	return extractValueFromJson(body)
 
 }
 
 func putMessage(chatId int64, value string) {
 
-    client := &http.Client{
-        Timeout: time.Second * 10,
-    }
+	client := &http.Client{
+		Timeout: time.Second * 10,
+	}
 
-    jsonText := []byte(value)
-    req, err := http.NewRequest(http.MethodPut, getItemUrl(chatId), bytes.NewBuffer(jsonText))
-    if err != nil {
-        log.Fatal(err)
-    }
+	jsonText := []byte(value)
+	req, err := http.NewRequest(http.MethodPut, getItemUrl(chatId), bytes.NewBuffer(jsonText))
+	if err != nil {
+		log.Fatal(err)
+	}
 
-    req.Header.Add("X-Mashape-Key", os.Getenv("KVSTORE_TOKEN"))
+	req.Header.Add("X-Mashape-Key", os.Getenv("KVSTORE_TOKEN"))
 
-    _, getErr := client.Do(req)
-    if getErr != nil {
-        log.Fatal(getErr)
-    }
+	_, getErr := client.Do(req)
+	if getErr != nil {
+		log.Fatal(getErr)
+	}
 }
 
 func getItemUrl(chatId int64) string {
-    return KVSTORE_URL + "/collections/" + os.Getenv("KVSTORE_COLLECTION_NAME") + "/items/" + strconv.FormatInt(chatId, 10)
+	return KVSTORE_URL + "/collections/" + os.Getenv("KVSTORE_COLLECTION_NAME") + "/items/" + strconv.FormatInt(chatId, 10)
 }
 
 func extractValueFromJson(jsonText []byte) string {
-    var message KvstoreMessage
-    jsonErr := json.Unmarshal(jsonText, &message)
-    if jsonErr != nil {
-        log.Fatal(jsonErr)
-    }
+	var message KvstoreMessage
+	jsonErr := json.Unmarshal(jsonText, &message)
+	if jsonErr != nil {
+		log.Fatal(jsonErr)
+	}
 
-    return message.Value
+	return message.Value
 }
