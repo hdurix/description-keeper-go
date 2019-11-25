@@ -1,8 +1,22 @@
 {
-  "alias": "telegram-description-keeper",
-  "env": {
-	"KVSTORE_TOKEN": "@keeper-kvstore-token",
-	"TELEGRAM_BOT_ID": "@keeper-bot-id",
-	"KVSTORE_COLLECTION_NAME": "messages"
-  }
+	"alias": "telegram-description-keeper",
+	"name": "telegram-description-keeper",
+	"version": 2,
+	"builds": [
+		{
+			"src": "*.go",
+			"use": "@now/go"
+		}
+	],
+	"routes": [
+		{
+			"src": "/(.*)/send",
+			"dest": "/server.go"
+		}
+	],
+	"env": {
+		"KVSTORE_TOKEN": "@keeper-kvstore-token",
+		"TELEGRAM_BOT_ID": "@keeper-bot-id",
+		"KVSTORE_COLLECTION_NAME": "messages"
+	}
 }
