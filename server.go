@@ -10,7 +10,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
-	"time"	
+	"time"
 
 	"gopkg.in/telegram-bot-api.v4"
 )
@@ -22,7 +22,7 @@ var (
 	ADD_COMMAND       string = "/add"
 	REMOVE_COMMAND    string = "/remove"
 
-	KVSTORE_URL    string = "https://kvstore.p.mashape.com"
+	KVSTORE_URL    string = "https://kvstore.p.rapidapi.com"
 	collectionName string = os.Getenv("KVSTORE_COLLECTION_NAME")
 	kvStoreToken   string = os.Getenv("KVSTORE_TOKEN")
 )
