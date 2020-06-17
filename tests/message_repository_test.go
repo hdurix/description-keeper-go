@@ -9,5 +9,5 @@ func Test_shouldUnmarshallJson(t *testing.T) {
 }
 
 func Test_shouldGetItemUrl(t *testing.T) {
-	compareTestStrings(t, getItemUrl(123, "messages"), "https://kvstore.p.mashape.com/collections/messages/items/123")
+	compareTestStrings(t, getItemUrl(123, "messages"), "https://api.kvstore.io/collections/messages/items/123")
 }

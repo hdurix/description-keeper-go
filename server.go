@@ -22,7 +22,8 @@ var (
 	ADD_COMMAND       string = "/add"
 	REMOVE_COMMAND    string = "/remove"
 
-	KVSTORE_URL    string = "https://kvstore.p.rapidapi.com"
+	KVSTORE_URL    string = "https://api.kvstore.io"
+	KVSTORE_HEADER string = "kvstoreio_api_key"
 	collectionName string = os.Getenv("KVSTORE_COLLECTION_NAME")
 	kvStoreToken   string = os.Getenv("KVSTORE_TOKEN")
 )
@@ -149,7 +150,7 @@ func getMessage(chatId int64) string {
 		log.Fatal(err)
 	}
 
-	req.Header.Add("X-Mashape-Key", kvStoreToken)
+	req.Header.Add(KVSTORE_HEADER, kvStoreToken)
 
 	res, getErr := client.Do(req)
 	if getErr != nil {
@@ -177,7 +178,8 @@ func putMessage(chatId int64, value string) {
 		log.Fatal(err)
 	}
 
-	req.Header.Add("X-Mashape-Key", kvStoreToken)
+	req.Header.Add(KVSTORE_HEADER, kvStoreToken)
+	req.Header.Add("Content-type", "text/plain")
 
 	_, getErr := client.Do(req)
 	if getErr != nil {

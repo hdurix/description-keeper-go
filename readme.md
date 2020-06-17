@@ -11,6 +11,28 @@ Can receive 4 commands:
 
 All data is stored in [kvstore.io][].
 
+## Go
+
+### Install Go
+
+    https://golang.org/dl/
+
+### Install packages
+
+    go get gopkg.in/telegram-bot-api.v4
+
+## Test
+
+*For now, you need to move all tests into root folder before running the tests...* 
+
+### Unit test
+
+    go test
+    
+### End to end test
+    
+    KVSTORE_TOKEN=xxx KVSTORE_COLLECTION_NAME=collection_name TELEGRAM_BOT_ID=123:ABC CHAT_ID_TEST=1234 go test
+
 ## Now
 
 ### Install now
