@@ -51,3 +51,15 @@ func Test_shouldExtractFromAdd(t *testing.T) {
 func Test_shouldExtractFromRemove(t *testing.T) {
 	compareTestStrings(t, extractRemoveText("/remove I remove this sentence"), "I remove this sentence")
 }
+
+func Test_shouldExtractEmptyStringFromSet(t *testing.T) {
+	compareTestStrings(t, extractSetText("/set"), "")
+}
+
+func Test_shouldExtractEmptyStringFromAdd(t *testing.T) {
+	compareTestStrings(t, extractAddText("/add"), "")
+}
+
+func Test_shouldExtractEmptyStringFromRemove(t *testing.T) {
+	compareTestStrings(t, extractRemoveText("/remove"), "")
+}

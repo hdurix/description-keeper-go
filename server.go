@@ -70,17 +70,24 @@ func isUpdateContainingMessage(update tgbotapi.Update) bool {
 }
 
 func extractSetText(text string) string {
-	return text[len(SET_COMMAND)+1:]
+	return textWithout(text, SET_COMMAND)
 }
 
 func extractAddText(text string) string {
-	return text[len(ADD_COMMAND)+1:]
+	return textWithout(text, ADD_COMMAND)
 }
 
 func extractRemoveText(text string) string {
-	return text[len(REMOVE_COMMAND)+1:]
+	return textWithout(text, REMOVE_COMMAND)
 }
 
+func textWithout(text string, partToRemove string) string {
+	if (text == partToRemove) {
+		return ""
+	}
+
+	return text[len(partToRemove)+1:]
+}
 
 // SERVICE
 
