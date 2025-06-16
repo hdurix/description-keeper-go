@@ -12,7 +12,7 @@ var (
 
 func Test_shouldSetMessage(t *testing.T) {
 	if isUnitTest() {
-		return
+		t.Skip("JSONBIN_TOKEN or JSONBIN_BIN_ID not set")
 	}
 	processUpdateMessage(chatId, "/set -tomato")
 	compareTestStrings(t, getMessage(chatId), "-tomato")
@@ -20,28 +20,30 @@ func Test_shouldSetMessage(t *testing.T) {
 
 func Test_shouldAddMessage(t *testing.T) {
 	if isUnitTest() {
-		return
+		t.Skip("JSONBIN_TOKEN or JSONBIN_BIN_ID not set")
 	}
 	processUpdateMessage(chatId, "/add -ketchup")
 	processUpdateMessage(chatId, "/add -mayo")
-	compareTestStrings(t, getMessage(chatId), "-tomato\n-ketchup\n-mayo")
+	expected := "-tomato\n-ketchup\n-mayo"
+	compareTestStrings(t, getMessage(chatId), expected)
 }
 
 func Test_shouldRemoveMessage(t *testing.T) {
 	if isUnitTest() {
-		return
+		t.Skip("JSONBIN_TOKEN or JSONBIN_BIN_ID not set")
 	}
 	processUpdateMessage(chatId, "/remove -ketchup")
-	compareTestStrings(t, getMessage(chatId), "-tomato\n-mayo")
+	expected := "-tomato\n-mayo"
+	compareTestStrings(t, getMessage(chatId), expected)
 }
 
 func Test_shouldGetMessage(t *testing.T) {
 	if isUnitTest() {
-		return
+		t.Skip("JSONBIN_TOKEN or JSONBIN_BIN_ID not set")
 	}
 	processUpdateMessage(chatId, "/get")
 }
 
 func isUnitTest() bool {
-	return os.Getenv("KVSTORE_TOKEN") == "" || os.Getenv("KVSTORE_COLLECTION_NAME") == "" || os.Getenv("TELEGRAM_BOT_ID") == ""
+	return os.Getenv("JSONBIN_TOKEN") == "" || os.Getenv("JSONBIN_BIN_ID") == "" || os.Getenv("TELEGRAM_BOT_ID") == ""
 }

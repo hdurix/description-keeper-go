@@ -9,7 +9,7 @@ Can receive 4 commands:
 - `/add`: Add line to channel description
 - `/remove`: Remove line from channel description
 
-All data is stored in [kvstore.io][].
+All data is stored in [jsonbin.io][].
 
 ## Go
 
@@ -31,7 +31,7 @@ All data is stored in [kvstore.io][].
     
 ### End to end test
     
-    KVSTORE_TOKEN=xxx KVSTORE_COLLECTION_NAME=collection_name TELEGRAM_BOT_ID=123:ABC CHAT_ID_TEST=1234 go test
+    JSONBIN_TOKEN=xxx JSONBIN_COLLECTION_NAME=collection_name TELEGRAM_BOT_ID=123:ABC CHAT_ID_TEST=1234 go test
 
 ## Now
 
@@ -46,7 +46,8 @@ yarn global add now
 ### Add secret variables
 
 ```sh
-now secrets add keeper-kvstore-token "XXXXX"
+now secrets add keeper-jsonbin-token "$2..."
+now secrets add keeper-jsonbin-bin-id "68..."
 now secrets add keeper-bot-id "123:ABC"
 ```
 
@@ -151,4 +152,4 @@ func TestName(t *testing.T) {
 - https://labix.org/gocheck
 
 
-[kvstore.io]: http://www.kvstore.io/
+[jsonbin.io]: http://www.jsonbin.io/

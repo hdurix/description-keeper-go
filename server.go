@@ -22,10 +22,10 @@ var (
 	ADD_COMMAND       string = "/add"
 	REMOVE_COMMAND    string = "/remove"
 
-	KVSTORE_URL    string = "https://api.kvstore.io"
-	KVSTORE_HEADER string = "kvstoreio_api_key"
-	collectionName string = os.Getenv("KVSTORE_COLLECTION_NAME")
-	kvStoreToken   string = os.Getenv("KVSTORE_TOKEN")
+	JSONBIN_URL    string = "https://api.jsonbin.io/v3/b"
+	JSONBIN_HEADER string = "X-Master-Key"
+	binId          string = os.Getenv("JSONBIN_BIN_ID")
+	jsonbinToken   string = os.Getenv("JSONBIN_TOKEN")
 )
 
 func Handler(w http.ResponseWriter, r *http.Request) {
@@ -142,68 +142,92 @@ func computeSendMessageUri(message string, chatId int64, botId string) string {
 }
 
 // REPOSITORY
-type KvstoreMessage struct {
-	Value string `json:"value"`
-}
 
 func getMessage(chatId int64) string {
+	client := &http.Client{Timeout: 10 * time.Second}
 
-	client := &http.Client{
-		Timeout: time.Second * 10,
+	req, err := http.NewRequest(http.MethodGet, JSONBIN_URL+"/"+binId+"/latest", nil)
+	if err != nil {
+		log.Fatal(err)
 	}
+	req.Header.Add(JSONBIN_HEADER, jsonbinToken)
 
-	req, err := http.NewRequest(http.MethodGet, getItemUrl(chatId, collectionName), nil)
+	res, err := client.Do(req)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer res.Body.Close()
+
+	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	req.Header.Add(KVSTORE_HEADER, kvStoreToken)
-
-	res, getErr := client.Do(req)
-	if getErr != nil {
-		log.Fatal(getErr)
+	var parsed map[string]interface{}
+	if err := json.Unmarshal(body, &parsed); err != nil {
+		log.Fatal(err)
 	}
 
-	body, readErr := ioutil.ReadAll(res.Body)
-	if readErr != nil {
-		log.Fatal(readErr)
+	recordRaw, exists := parsed["record"]
+	if !exists {
+		log.Println("No record found in response")
+		return ""
 	}
 
-	return extractValueFromJson(body)
+	record, ok := recordRaw.(map[string]interface{})
+	if !ok {
+		log.Println("Invalid record format")
+		return ""
+	}
 
+	val, exists := record[strconv.FormatInt(chatId, 10)]
+	if !exists {
+		return ""
+	}
+
+	valStr, ok := val.(string)
+	if !ok {
+		return ""
+	}
+
+	return valStr
 }
+
 
 func putMessage(chatId int64, value string) {
-
-	client := &http.Client{
-		Timeout: time.Second * 10,
-	}
-
-	jsonText := []byte(value)
-	req, err := http.NewRequest(http.MethodPut, getItemUrl(chatId, collectionName), bytes.NewBuffer(jsonText))
+	// Step 1: Get current record
+	client := &http.Client{Timeout: 10 * time.Second}
+	getReq, _ := http.NewRequest(http.MethodGet, JSONBIN_URL+"/"+binId+"/latest", nil)
+	getReq.Header.Add(JSONBIN_HEADER, jsonbinToken)
+	getRes, err := client.Do(getReq)
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer getRes.Body.Close()
 
-	req.Header.Add(KVSTORE_HEADER, kvStoreToken)
-	req.Header.Add("Content-type", "text/plain")
+	body, _ := ioutil.ReadAll(getRes.Body)
+	var parsed map[string]interface{}
+	json.Unmarshal(body, &parsed)
+	var record map[string]interface{}
+    if recordRaw, ok := parsed["record"]; ok {
+        record, _ = recordRaw.(map[string]interface{})
+    } else {
+        record = make(map[string]interface{})
+    }
 
-	_, getErr := client.Do(req)
-	if getErr != nil {
-		log.Fatal(getErr)
+	// Step 2: Modify in-memory
+	record[strconv.FormatInt(chatId, 10)] = value
+
+	// Step 3: Send updated record
+	newBody, _ := json.Marshal(record)
+	putReq, err := http.NewRequest(http.MethodPut, JSONBIN_URL+"/"+binId, bytes.NewBuffer(newBody))
+	if err != nil {
+		log.Fatal(err)
 	}
-}
-
-func getItemUrl(chatId int64, collectionName string) string {
-	return KVSTORE_URL + "/collections/" + collectionName + "/items/" + strconv.FormatInt(chatId, 10)
-}
-
-func extractValueFromJson(jsonText []byte) string {
-	var message KvstoreMessage
-	jsonErr := json.Unmarshal(jsonText, &message)
-	if jsonErr != nil {
-		log.Fatal(jsonErr)
+	putReq.Header.Add(JSONBIN_HEADER, jsonbinToken)
+	putReq.Header.Add("Content-Type", "application/json")
+	_, err = client.Do(putReq)
+	if err != nil {
+		log.Fatal(err)
 	}
-
-	return message.Value
 }
