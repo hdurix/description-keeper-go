@@ -33,43 +33,26 @@ All data is stored in [jsonbin.io][].
     
     JSONBIN_TOKEN=xxx JSONBIN_COLLECTION_NAME=collection_name TELEGRAM_BOT_ID=123:ABC CHAT_ID_TEST=1234 go test
 
-## Now
+## Vercel
 
-### Install now
+### Install vercel
 
 For example:
 
 ```sh
-yarn global add now
+npm i -g vercel
 ```
 
-### Add secret variables
+### Get secret variables
 
 ```sh
-now secrets add keeper-jsonbin-token "$2..."
-now secrets add keeper-jsonbin-bin-id "68..."
-now secrets add keeper-bot-id "123:ABC"
+vercel env --ls
 ```
 
 ### Deploy the app
 
 ```sh
-now
-```
-
-### Use Alias
-
-You can first change the alias in [now.json](now.json).
-```json
-{
-  "alias": "custom-alias",
-}
-```
-
-Then, once the deployment is done:
-
-```sh
-now alias
+vercel --prod
 ```
 
 ## Telegram
