@@ -52,6 +52,7 @@ func processUpdate(update tgbotapi.Update) {
 
 func processUpdateMessage(chatId int64, text string) {
 	log.Printf("[Chat Id: %d] Treat message %s\n", chatId, text)
+	log.Println("BIN_ID =", binId)
 
 	if strings.HasPrefix(text, SET_COMMAND) {
 		setDescription(chatId, extractSetText(text))
