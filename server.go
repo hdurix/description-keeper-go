@@ -195,39 +195,66 @@ func getMessage(chatId int64) string {
 
 
 func putMessage(chatId int64, value string) {
-	// Step 1: Get current record
 	client := &http.Client{Timeout: 10 * time.Second}
-	getReq, _ := http.NewRequest(http.MethodGet, JSONBIN_URL+"/"+binId+"/latest", nil)
+
+	// Step 1: Fetch current bin content
+	getReq, err := http.NewRequest(http.MethodGet, JSONBIN_URL+"/"+binId+"/latest", nil)
+	if err != nil {
+		log.Fatalf("Failed to create GET request to JSONBin: %v", err)
+	}
 	getReq.Header.Add(JSONBIN_HEADER, jsonbinToken)
+
 	getRes, err := client.Do(getReq)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Failed to execute GET request to JSONBin: %v", err)
 	}
 	defer getRes.Body.Close()
 
-	body, _ := ioutil.ReadAll(getRes.Body)
-	var parsed map[string]interface{}
-	json.Unmarshal(body, &parsed)
-	var record map[string]interface{}
-    if recordRaw, ok := parsed["record"]; ok {
-        record, _ = recordRaw.(map[string]interface{})
-    } else {
-        record = make(map[string]interface{})
-    }
+	getBody, err := ioutil.ReadAll(getRes.Body)
+	if err != nil {
+		log.Fatalf("Failed to read GET response body: %v", err)
+	}
 
-	// Step 2: Modify in-memory
+	var parsed map[string]interface{}
+	if err := json.Unmarshal(getBody, &parsed); err != nil {
+		log.Fatalf("Failed to parse GET response JSON: %v", err)
+	}
+
+	// Prepare the current record map or create a new one if it doesn't exist
+	var record map[string]interface{}
+	if recordRaw, ok := parsed["record"]; ok {
+		record, _ = recordRaw.(map[string]interface{})
+	} else {
+		record = make(map[string]interface{})
+	}
+
+	// Step 2: Update the record with new value
 	record[strconv.FormatInt(chatId, 10)] = value
 
-	// Step 3: Send updated record
-	newBody, _ := json.Marshal(record)
+	// Step 3: Send the updated record with a PUT request
+	newBody, err := json.Marshal(record)
+	if err != nil {
+		log.Fatalf("Failed to encode updated record to JSON: %v", err)
+	}
+
 	putReq, err := http.NewRequest(http.MethodPut, JSONBIN_URL+"/"+binId, bytes.NewBuffer(newBody))
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Failed to create PUT request to JSONBin: %v", err)
 	}
 	putReq.Header.Add(JSONBIN_HEADER, jsonbinToken)
 	putReq.Header.Add("Content-Type", "application/json")
-	_, err = client.Do(putReq)
+
+	putRes, err := client.Do(putReq)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Failed to execute PUT request to JSONBin: %v", err)
 	}
+	defer putRes.Body.Close()
+
+	putRespBody, _ := ioutil.ReadAll(putRes.Body)
+
+	if putRes.StatusCode >= 400 {
+		log.Fatalf("JSONBin PUT failed (HTTP %d): %s", putRes.StatusCode, string(putRespBody))
+	}
+
+	log.Printf("JSONBin PUT successful: %s", string(putRespBody))
 }
