@@ -12,10 +12,5 @@
 			"src": "/(.*)/send",
 			"dest": "server.go"
 		}
-	],
-	"env": {
-		"JSONBIN_TOKEN": "JSONBIN_TOKEN",
-		"TELEGRAM_BOT_ID": "TELEGRAM_BOT_ID",
-		"JSONBIN_BIN_ID": "JSONBIN_BIN_ID"
-	}
+	]
 }
